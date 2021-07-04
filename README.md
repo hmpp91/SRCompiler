@@ -6,13 +6,22 @@
 
 ## Table of contents
 * [General Info](#general-info)
+* [Building and prerequisites](#building-and-prerequisites)
 * [Usage](#usage)
-* [Builtins and Operators Implemented](#builtins_operators)
+* [Builtins and Operators Implemented](#builtins-and-operators-implemented)
 * [Contact](#contact)
 * [License](license)
 
 ## General Info
 Export Stella models to R scripts.
+
+## Building and prerequisites
+If you want to build the project, you will need a C++ compiler, Bison, Flex and Make installed.
+
+Simply run:
+```
+$ build.sh
+```
 
 ## Usage:
 1. First, export your Stella model to .txt format:  
