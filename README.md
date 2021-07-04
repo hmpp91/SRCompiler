@@ -72,7 +72,7 @@ If you ever have any questions, feel free to make an issue here on GitHub.
 
 ## License:
 <p align="center">
-  <img src="images/GPLv3_Logo.svg.png" width="165"/>
+  <img src="images/GPLv3_Logo.svg.png" width="175"/>
 </p>
 
 SRCompiler is Free Software: You can use, study share and improve it at your will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
