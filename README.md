@@ -1,7 +1,7 @@
 # SRCompiler
 
 <p align="center">
-  <img src="images/src-git-logo.png" />
+  <img src="images/src-git-logo.png" width="75"/>
 </p>
 
 ## Table of contents

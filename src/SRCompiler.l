@@ -1,4 +1,3 @@
-/*--------------------------------plp4.l--------------------------------------*/
 /*
     This file is part of SRCompiler.
 
@@ -39,7 +38,7 @@ LD [0-9a-zA-Z_]
     void msgError(int nerror, int nlin, int ncol, const char *s);
 %}
 
-%x COMENTARIO
+%x Commentary 
 
 %%
 
