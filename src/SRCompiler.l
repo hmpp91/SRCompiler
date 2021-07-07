@@ -72,6 +72,7 @@ LD [0-9a-zA-Z_]
 ">="                    {return ret(oprel);}
 "=="                    {return ret(oprel);}
 "!="                    {return ret(oprel);}
+"!"                     {return ret(oprel);}
 "||"                    {return ret(oprel);}
 "&&"                    {return ret(oprel);}
 "+"                     {return ret(opas);}

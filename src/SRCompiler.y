@@ -160,7 +160,7 @@ OpPrevious : tkPrevious pari Op tkComa Op pard {
         };
 
 // Logical Builtins 
-OpIf         : tkIf Op oprel Op tkThen Op tkElse Op {
+OpIf       : tkIf Op oprel Op tkThen Op tkElse Op {
             $$.lexema = strcat($$.lexema,  "ELSE(");
             $$.lexema = strcat($$.lexema,  $2.lexema);
             $$.lexema = strcat($$.lexema,  $3.lexema);
@@ -171,6 +171,20 @@ OpIf         : tkIf Op oprel Op tkThen Op tkElse Op {
             $$.lexema = strcat($$.lexema, $8.lexema);
             $$.lexema = strcat($$.lexema, ")");
         };
+            | tkIf oprel pari Op oprel Op pard tkThen Op tkElse Op {
+            $$.lexema = strcat($$.lexema,  "ELSE(");
+            $$.lexema = strcat($$.lexema,  $2.lexema);
+            $$.lexema = strcat($$.lexema,  $3.lexema);
+            $$.lexema = strcat($$.lexema,  $4.lexema);
+            $$.lexema = strcat($$.lexema,  $5.lexema);
+            $$.lexema = strcat($$.lexema,  $6.lexema);
+            $$.lexema = strcat($$.lexema,  $7.lexema);
+            $$.lexema = strcat($$.lexema, ",");
+            $$.lexema = strcat($$.lexema, $9.lexema);
+            $$.lexema = strcat($$.lexema, ",");
+            $$.lexema = strcat($$.lexema, $11.lexema);
+            $$.lexema = strcat($$.lexema, ")"); 
+            };
             | tkIf pari Op oprel Op pard oprel pari Op oprel Op pard tkThen Op tkElse Op {
             $$.lexema = strcat($$.lexema,  "ELSE(");           
             $$.lexema = strcat($$.lexema,  $2.lexema);
@@ -609,7 +623,7 @@ void parseFile(const std::string& fileName) {
         }
         if (buffer.find("NOT") != std::string::npos)
         {
-            buffer.replace(buffer.find(" NOT "), 5, " !");
+            buffer.replace(buffer.find(" NOT"), 4, " !");
         }
         if (buffer.find(" AND ") != std::string::npos)
         {
