@@ -40,7 +40,8 @@
 
 const int ERRYADECL=1,ERRNODECL=2,ERRTIPOS=3,ERRNOSIMPLE=4,ERRNOENTERO=5;
 
-#define YYMAXDEPTH 30000
+#define YYMAXDEPTH 31000
+#define YYINITDEPTH 30000
 
 #include <sstream>
 #include <string.h>
