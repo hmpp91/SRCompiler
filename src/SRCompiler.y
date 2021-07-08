@@ -1,3 +1,4 @@
+/*--------------------------------plp4.y--------------------------------------*/
 /*
     This file is part of SRCompiler.
 
@@ -37,8 +38,9 @@
 
 %{
 
-
 const int ERRYADECL=1,ERRNODECL=2,ERRTIPOS=3,ERRNOSIMPLE=4,ERRNOENTERO=5;
+
+#define YYMAXDEPTH 30000
 
 #include <sstream>
 #include <string.h>
@@ -49,6 +51,22 @@ const int ERRYADECL=1,ERRNODECL=2,ERRTIPOS=3,ERRNOSIMPLE=4,ERRNOENTERO=5;
 #include <map>
 #include <fstream>
 #include <algorithm>
+
+const char* LOGO = 
+"                      ////&&&&               \n \
+               //////%&&&////#&&&&%         \n \
+            ////.&&&&&&../////////&&&%      \n \
+          ./// &&&(      ///    ///* &&/    \n \
+         ///   &&&       ///    ////  (&&   \n \
+        *//     &&&&     /////////.    &&&  \n \
+        ///        &&&&  /////*         &&  \n \
+        ///           &&&/// ///,       &&  \n \
+        (//           &&&///  ////     /&&  \n \
+         ///          &&&///    ///   /&&   \n \
+          ///%&&&    &&& ///     ///.&&&    \n \
+            ///(&&&&&&&  ///      (&&&      \n \
+               /////     ///   &&&&         \n \
+                   //////&&&&&/             \n";
 
 using namespace std;
 
@@ -160,7 +178,7 @@ OpPrevious : tkPrevious pari Op tkComa Op pard {
         };
 
 // Logical Builtins 
-OpIf       : tkIf Op oprel Op tkThen Op tkElse Op {
+OpIf         : tkIf Op oprel Op tkThen Op tkElse Op {
             $$.lexema = strcat($$.lexema,  "ELSE(");
             $$.lexema = strcat($$.lexema,  $2.lexema);
             $$.lexema = strcat($$.lexema,  $3.lexema);
@@ -171,20 +189,6 @@ OpIf       : tkIf Op oprel Op tkThen Op tkElse Op {
             $$.lexema = strcat($$.lexema, $8.lexema);
             $$.lexema = strcat($$.lexema, ")");
         };
-            | tkIf oprel pari Op oprel Op pard tkThen Op tkElse Op {
-            $$.lexema = strcat($$.lexema,  "ELSE(");
-            $$.lexema = strcat($$.lexema,  $2.lexema);
-            $$.lexema = strcat($$.lexema,  $3.lexema);
-            $$.lexema = strcat($$.lexema,  $4.lexema);
-            $$.lexema = strcat($$.lexema,  $5.lexema);
-            $$.lexema = strcat($$.lexema,  $6.lexema);
-            $$.lexema = strcat($$.lexema,  $7.lexema);
-            $$.lexema = strcat($$.lexema, ",");
-            $$.lexema = strcat($$.lexema, $9.lexema);
-            $$.lexema = strcat($$.lexema, ",");
-            $$.lexema = strcat($$.lexema, $11.lexema);
-            $$.lexema = strcat($$.lexema, ")"); 
-            };
             | tkIf pari Op oprel Op pard oprel pari Op oprel Op pard tkThen Op tkElse Op {
             $$.lexema = strcat($$.lexema,  "ELSE(");           
             $$.lexema = strcat($$.lexema,  $2.lexema);
@@ -590,11 +594,12 @@ void msgError(int nerror,int nlin,int ncol,const char *s)
             break;
      }
         
-     exit(1);
+     //exit(1);
 }
 
 int yyerror(char *s)
 {
+    std::cout << "Error from yyerror: " << s << "\n";
     if (findefichero) 
     {
        msgError(ERREOF,-1,-1,"");
@@ -623,7 +628,7 @@ void parseFile(const std::string& fileName) {
         }
         if (buffer.find("NOT") != std::string::npos)
         {
-            buffer.replace(buffer.find(" NOT"), 4, " !");
+            buffer.replace(buffer.find(" NOT "), 5, " !");
         }
         if (buffer.find(" AND ") != std::string::npos)
         {
@@ -650,7 +655,7 @@ void parseFile(const std::string& fileName) {
 
             fileGraph << "t," << varName << "\n";
 
-            fileFunctions << "temp <- read.csv(" << "'" << fileName.substr( fileName.find_last_of("/")+1, fileName.find_last_of(".") - fileName.find_last_of("/")-1 ) + "_Data_" + varName + ".csv" << "')" << "\n";
+            fileFunctions << "temp <- read.csv(" << "'" << fileName.substr( fileName.find_last_of("/")+1, fileName.length() - fileName.find_last_of(".")-2 ) + "_Data_" + varName + ".csv" << "')" << "\n";
             fileFunctions << "temp <- list(" + varName + " = temp)" << "\n";
             fileFunctions << "input.Data <- c(input.Data, temp)" << "\n"; 
             
@@ -758,7 +763,7 @@ writeOutputFile(const std::string& fileName) {
 
     writer << ")\n\n";
 
-    writer << "source('" + fileName.substr( fileName.find_last_of("/")+1, fileName.find_last_of(".") - fileName.find_last_of("/")-1 ) + "_functions.R" + "')\n";
+    writer << "source('" + fileName.substr( fileName.find_last_of("/")+1, fileName.length() - fileName.find_last_of(".")-2 ) + "_functions.R" + "')\n";
     writer << "DT <- 0.25\n";
     writer << "time <- seq(0.001,100,DT)\n";
     writer << "out <- ode(func=model,y=Y,times=time,parms=parms,method='euler')\n";
@@ -783,8 +788,10 @@ int main(int argc,char *argv[])
         {
             yyin = fent;
             yyparse();
-            fclose(fent);
+            fclose(fent) ;
             writeOutputFile(fileName);
+            std::cout << LOGO << "\n";
+            std::cout << "Translation completed! Thanks for using SRCompiler!\n\n";
         }
         else
             fprintf(stderr,"Cannot open the file\n");
