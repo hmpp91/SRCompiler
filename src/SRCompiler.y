@@ -669,7 +669,7 @@ void parseFile(const std::string& fileName) {
 
             fileGraph << "t," << varName << "\n";
 
-            fileFunctions << "temp <- read.csv(" << "'" << fileName.substr( fileName.find_last_of("/")+1, fileName.length() - fileName.find_last_of(".")-2 ) + "_Data_" + varName + ".csv" << "')" << "\n";
+            fileFunctions << "temp <- read.csv(" << "'" << fileName.substr( fileName.find_last_of("/")+1, fileName.find_last_of(".") - fileName.find_last_of("/")-1 ) + "_Data_" + varName + ".csv" << "')" << "\n";
             fileFunctions << "temp <- list(" + varName + " = temp)" << "\n";
             fileFunctions << "input.Data <- c(input.Data, temp)" << "\n"; 
             
@@ -777,7 +777,7 @@ writeOutputFile(const std::string& fileName) {
 
     writer << ")\n\n";
 
-    writer << "source('" + fileName.substr( fileName.find_last_of("/")+1, fileName.length() - fileName.find_last_of(".")-2 ) + "_functions.R" + "')\n";
+    writer << "source('" + fileName.substr( fileName.find_last_of("/")+1, fileName.find_last_of("."    ) - fileName.find_last_of("/")-1 ) + "_functions.R" + "')\n";
     writer << "DT <- 0.25\n";
     writer << "time <- seq(0.001,100,DT)\n";
     writer << "out <- ode(func=model,y=Y,times=time,parms=parms,method='euler')\n";
