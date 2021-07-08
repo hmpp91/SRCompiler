@@ -10,7 +10,7 @@
 * [Usage](#usage)
 * [Builtins and Operators Implemented](#builtins-and-operators-implemented)
 * [Contact](#contact)
-* [License](license)
+* [License](#license)
 
 ## General Info
 Export Stella models to R scripts.
