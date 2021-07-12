@@ -15,16 +15,11 @@
     along with SRCompiler.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-%token tkTimePar tkDT tkComa 
-%token tkTime tkDiT tkStartTime tkStopTime
+%token tkInit tkDT tkComa 
 %token tkIf tkElse tkNot tkOr tkThen tkAnd
-%token tkInit tkT
+%token tkT
 %token tkGraph 
-%token tkCter tkTrend 
-%token tkRandom tkNormal tkPoisson tkLognormal tkExprand 
-%token tkEndval tkHistory tkPrevious
-%token tkArccos tkArcsin tkArctan tkCos tkCoswave tkSin tkSinwave tkTan
-%token tkMax tkMin tkExp tkAbs tkInt tkLn tkLog tkMod tkPer tkPi tkRtn tkRond tkSfDiv tkSqrt
+%token tkBuiltin
 
 %token id
 %token opas opmul oprel opExp
@@ -140,277 +135,80 @@ A   : id { YValues.push_back($1.lexema); } pari tkT pard asig id pari tkT opas t
     | {};
 
 // Input parameters of Builtins
-OpF0 : pari Op pard {
+OpFparams : Op {
+            $$.lexema = $1.lexema;
+        };
+        | Op tkComa OpFparams
+        {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
-     };
-
-OpF1 :  pari Op tkComa Op pard {
+        };
+        | Op pyc OpFparams
+        {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
-            $$.lexema = strcat($$.lexema, $4.lexema);
-            $$.lexema = strcat($$.lexema, $5.lexema);
         };
 
-OpF2 :  pari Op tkComa Op tkComa Op pard {
+OpFpars : pari OpFparams pard {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
-            $$.lexema = strcat($$.lexema, $4.lexema);
-            $$.lexema = strcat($$.lexema, $5.lexema);
-            $$.lexema = strcat($$.lexema, $6.lexema);
-            $$.lexema = strcat($$.lexema, $7.lexema);
-        };
-
-// Data Builtins
-OpEndval   : tkEndval OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpHistory  : tkHistory OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
         };  
-           | tkHistory OpF2 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
 
-OpPrevious : tkPrevious OpF1 {
+OpBuiltin : tkBuiltin OpFpars {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-// Logical Builtins 
-OpIf         : tkIf Op oprel Op tkThen Op tkElse Op {
-            $$.lexema = strcat($$.lexema,  "ELSE(");
-            $$.lexema = strcat($$.lexema,  $2.lexema);
-            $$.lexema = strcat($$.lexema,  $3.lexema);
-            $$.lexema = strcat($$.lexema,  $4.lexema);
-            $$.lexema = strcat($$.lexema, ",");
-            $$.lexema = strcat($$.lexema, $6.lexema);
-            $$.lexema = strcat($$.lexema, ",");
-            $$.lexema = strcat($$.lexema, $8.lexema);
-            $$.lexema = strcat($$.lexema, ")");
-        };
-        | tkIf oprel pari Op oprel Op pard tkThen Op tkElse Op {
-             $$.lexema = strcat($$.lexema,  "ELSE(");
-             $$.lexema = strcat($$.lexema,  $2.lexema);
-             $$.lexema = strcat($$.lexema,  $3.lexema);
-             $$.lexema = strcat($$.lexema,  $4.lexema);
-             $$.lexema = strcat($$.lexema,  $5.lexema);
-             $$.lexema = strcat($$.lexema,  $6.lexema);
-             $$.lexema = strcat($$.lexema,  $7.lexema);
-             $$.lexema = strcat($$.lexema, ",");
-             $$.lexema = strcat($$.lexema, $9.lexema);
-             $$.lexema = strcat($$.lexema, ",");
-             $$.lexema = strcat($$.lexema, $11.lexema);
-             $$.lexema = strcat($$.lexema, ")"); 
-             };
-            | tkIf pari Op oprel Op pard oprel pari Op oprel Op pard tkThen Op tkElse Op {
-            $$.lexema = strcat($$.lexema,  "ELSE(");           
-            $$.lexema = strcat($$.lexema,  $2.lexema);
-            $$.lexema = strcat($$.lexema,  $3.lexema);
-            $$.lexema = strcat($$.lexema,  $4.lexema);
-            $$.lexema = strcat($$.lexema,  $5.lexema);
-            $$.lexema = strcat($$.lexema,  $6.lexema);
-            $$.lexema = strcat($$.lexema,  $7.lexema);
-            $$.lexema = strcat($$.lexema,  $8.lexema);
-            $$.lexema = strcat($$.lexema,  $9.lexema);
-            $$.lexema = strcat($$.lexema,  $10.lexema);
-            $$.lexema = strcat($$.lexema,  $11.lexema);
-            $$.lexema = strcat($$.lexema,  $12.lexema);
-            $$.lexema = strcat($$.lexema, ",");
-            $$.lexema = strcat($$.lexema, $14.lexema);
-            $$.lexema = strcat($$.lexema, ",");
-            $$.lexema = strcat($$.lexema, $16.lexema);
-            $$.lexema = strcat($$.lexema, ")");
-            };
-
-// Statistical Builtins 
-OpRandom     : tkRandom OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-             | tkRandom OpF2 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-
-OpNormal     : tkNormal OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-             | tkNormal OpF2 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-
-OpPoisson    : tkPoisson OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-             | tkPoisson OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-
-OpLognormal  : tkLognormal OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-             | tkLognormal OpF2 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-
-OpExprand    : tkExprand OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-             | tkExprand OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-
-// Miscellaneous Builtins 
-OpCter : tkCter OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-OpTren    : tkTrend OpF2 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-
-// Simulation Builtins 
-OpTime  : tkTime {
+          };
+        | tkBuiltin  
+        {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, "(");
             $$.lexema = strcat($$.lexema, ")");
-        }
-
-// Mathematical Builtins 
-OpMax   : tkMax OpF1 { 
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        }; 
-        | tkMax OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
         };
 
-OpMin   : tkMin OpF1 {
+// Logical Builtins 
+OpIfparams1 : pari Op oprel OpIfparams1 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
+            $$.lexema = strcat($$.lexema, $3.lexema);
+            $$.lexema = strcat($$.lexema, $4.lexema);
         };
-
-OpExp   : tkExp OpF0 { 
+           | Op pard oprel OpIfparams1 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
+            $$.lexema = strcat($$.lexema, $3.lexema);
+            $$.lexema = strcat($$.lexema, $4.lexema);
         };
-
-OpAbs   : tkAbs OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpInt   : tkInt OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpLn    : tkLn OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpLog   : tkLog OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpMod   : tkMod OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpPer   : tkPer OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpPi    : tkPi pari pard {
+           | Op pard OpIfparams2 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
         };
-
-OpRtn   : tkRtn OpF1 {
+           | Op oprel OpIfparams1 {
+            $$.lexema = $1.lexema;
+            $$.lexema = strcat($$.lexema, $2.lexema);
+            $$.lexema = strcat($$.lexema, $3.lexema);
+        };
+           | Op OpIfparams2 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
         };
 
-OpRond  : tkRond OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
+OpIfparams2 : tkThen Op tkElse Op {
+            std::stringstream ss;
+            ss << "," << $2.lexema << "," << $4.lexema;
+            $$.lexema = strdup(ss.str().c_str());
         };
 
-OpSfDiv : tkSfDiv OpF1 {
-            $$.lexema = $1.lexema;
+OpIf        : tkIf OpIfparams1 {
+            $$.lexema = strcat($$.lexema,  "ELSE(");
             $$.lexema = strcat($$.lexema, $2.lexema);
+            $$.lexema = strcat($$.lexema, ")");
         };
 
-OpSqrt  : tkSqrt OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-
-// Trigonometric Builtins 
-OpACos  : tkArccos OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpASin  : tkArcsin OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpATan  : tkArctan OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpCos   : tkCos OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpCW    : tkCoswave OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpSin   : tkSin OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpSW    : tkSinwave OpF1 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
-OpTan   : tkTan OpF0 {
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-        };
-
+// -----
 Op     : F opas Op { 
             std::stringstream ss;
             ss << $1.lexema << " " << $2.lexema << " " << $3.lexema;
@@ -430,42 +228,15 @@ OpExpo : F opExp Op {
             std::stringstream ss;
             ss << $1.lexema << " " << $2.lexema << " " << $3.lexema;
             $$.lexema = strdup(ss.str().c_str()); };
-       | F{ $$.tipo = $1.tipo; };
+       | F { $$.tipo = $1.tipo; };
 
 F   : numentero { $$.tipo = ENTERO; };
     | numreal   { $$.tipo = REAL; };
     | opas F    { $$.lexema = $1.lexema;
                  $$.lexema = strcat($$.lexema, $2.lexema);
                 };
-    | OpEndval  { $$.lexema = $1.lexema; };
-    | OpHistory { $$.lexema = $1.lexema; };
-    | OpPrevious{ $$.lexema = $1.lexema; };
-    | OpRandom  { $$.lexema = $1.lexema; };
-    | OpMax     { $$.lexema = $1.lexema; };
-    | OpMin     { $$.lexema = $1.lexema; };
-    | OpExp     { $$.lexema = $1.lexema; };
-    | OpAbs     { $$.lexema = $1.lexema; };
-    | OpInt     { $$.lexema = $1.lexema; };
-    | OpLn      { $$.lexema = $1.lexema; };
-    | OpLog     { $$.lexema = $1.lexema; };
-    | OpMod     { $$.lexema = $1.lexema; };
-    | OpPer     { $$.lexema = $1.lexema; };
-    | OpPi      { $$.lexema = $1.lexema; };
-    | OpRtn     { $$.lexema = $1.lexema; };
-    | OpRond    { $$.lexema = $1.lexema; };
-    | OpSfDiv   { $$.lexema = $1.lexema; };
-    | OpSqrt    { $$.lexema = $1.lexema; };
-    | OpACos    { $$.lexema = $1.lexema; };
-    | OpASin    { $$.lexema = $1.lexema; };
-    | OpATan    { $$.lexema = $1.lexema; };
-    | OpCos     { $$.lexema = $1.lexema; };
-    | OpCW      { $$.lexema = $1.lexema; };
-    | OpSin     { $$.lexema = $1.lexema; };
-    | OpSW      { $$.lexema = $1.lexema; };
-    | OpTan     { $$.lexema = $1.lexema; };
-    | OpCter    { $$.lexema = $1.lexema; };
-    | OpIf      { $$.lexema = $1.lexema; };
-    | OpTime    { $$.lexema = $1.lexema; };
+    | OpBuiltin { $$.lexema = $1.lexema; } 
+    | OpIf      { $$.lexema = $1.lexema; } 
     | id        { $$.lexema = $1.lexema; };
     | pari Op pard { 
             $$.lexema = $1.lexema;
