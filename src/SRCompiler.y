@@ -21,7 +21,7 @@
 %token tkGraph 
 %token tkBuiltin
 
-%token id
+%token id id2 
 %token opas opmul oprel opExp
 %token numentero numreal pari pard
 %token pyc coma dosp
@@ -115,36 +115,35 @@ X   : {
 
 S   : A {};
 
-A   : id { YValues.push_back($1.lexema); } pari tkT pard asig id pari tkT opas tkDT pard opas pari Op {
+A   : id { YValues.push_back($1.lexema); } pari tkT pard asig id pari tkT opas tkDT pard opas pari Op  {
             char prefix = 'd';
             std::string varName { $1.lexema };
             varName = prefix + varName;
             DValues[varName] = $15.lexema; 
-        } pard opmul tkDT A{};
-    | tkInit id asig F A {
+    } pard opmul tkDT A{};
+    | tkInit id asig Op {
         InitValues[$2.lexema] = atof($4.lexema);
-    };  
+    } A{};  
     | id asig Op { 
         if ($3.tipo == REAL || $3.tipo == ENTERO) {
             ParamValues[$1.lexema] = atof($3.lexema);
         } else {
             BValues[$1.lexema] = $3.lexema;
         }
-    } A{};
-        
+    } A{ };
     | {};
 
 // Input parameters of Builtins
-OpFparams : Op {
+OpFparams : F {
             $$.lexema = $1.lexema;
         };
-        | Op tkComa OpFparams
+        | F tkComa OpFparams
         {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
         };
-        | Op pyc OpFparams
+        | F pyc OpFparams
         {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
@@ -157,10 +156,15 @@ OpFpars : pari OpFparams pard {
             $$.lexema = strcat($$.lexema, $3.lexema);
         };  
 
-OpBuiltin : tkBuiltin OpFpars {
+OpBuiltin : tkBuiltin OpBuiltin {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
           };
+        | tkBuiltin OpFpars 
+        {
+            $$.lexema = $1.lexema;
+            $$.lexema = strcat($$.lexema, $2.lexema);
+        };
         | tkBuiltin  
         {
             $$.lexema = $1.lexema;
@@ -169,34 +173,34 @@ OpBuiltin : tkBuiltin OpFpars {
         };
 
 // Logical Builtins 
-OpIfparams1 : pari Op oprel OpIfparams1 {
+OpIfparams1 : pari F oprel OpIfparams1 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
             $$.lexema = strcat($$.lexema, $4.lexema);
         };
-           | Op pard oprel OpIfparams1 {
+           | F pard oprel OpIfparams1 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
             $$.lexema = strcat($$.lexema, $4.lexema);
         };
-           | Op pard OpIfparams2 {
+           | F pard OpIfparams2 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
         };
-           | Op oprel OpIfparams1 {
+           | F oprel OpIfparams1 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
             $$.lexema = strcat($$.lexema, $3.lexema);
         };
-           | Op OpIfparams2 {
+           | F OpIfparams2 {
             $$.lexema = $1.lexema;
             $$.lexema = strcat($$.lexema, $2.lexema);
         };
 
-OpIfparams2 : tkThen Op tkElse Op {
+OpIfparams2 : tkThen F tkElse F {
             std::stringstream ss;
             ss << "," << $2.lexema << "," << $4.lexema;
             $$.lexema = strdup(ss.str().c_str());
@@ -209,40 +213,57 @@ OpIf        : tkIf OpIfparams1 {
         };
 
 // -----
-Op     : F opas Op { 
+Op     : pari Op pard arith { 
             std::stringstream ss;
-            ss << $1.lexema << " " << $2.lexema << " " << $3.lexema;
-            $$.lexema = strdup(ss.str().c_str()); };
-       | OpMul{ $$.tipo = $1.tipo; };
-
-OpMul  : F opmul Op {
-            std::stringstream ss;
-            ss << $1.lexema << " " << $2.lexema << " " << $3.lexema;
+            ss << $1.lexema << " " << $2.lexema << " " << $3.lexema << " " << $4.lexema;
             $$.lexema = strdup(ss.str().c_str()); 
-        };
-       | OpExpo { 
-            $$.tipo = $1.tipo; 
-        };
-
-OpExpo : F opExp Op {
+       };
+       | pari Op pard {
             std::stringstream ss;
             ss << $1.lexema << " " << $2.lexema << " " << $3.lexema;
+            $$.lexema = strdup(ss.str().c_str());
+       };
+       | F arith {
+            std::stringstream ss;
+            ss << $1.lexema << " " << $2.lexema;
+            $$.lexema = strdup(ss.str().c_str());
+       }; 
+       | F {
+            std::stringstream ss;
+            ss << $1.lexema;
+            $$.lexema = strdup(ss.str().c_str());
+       };
+
+arith  : opas Op  {
+            std::stringstream ss;
+            ss << $1.lexema << " " << $2.lexema;
+            $$.lexema = strdup(ss.str().c_str());
+       }; 
+       | opmul Op {
+            std::stringstream ss;
+            ss << $1.lexema << " " << $2.lexema;
+            $$.lexema = strdup(ss.str().c_str());
+       };
+       | OpExpo   {
+            std::stringstream ss;
+            ss << $1.lexema;
+            $$.lexema = strdup(ss.str().c_str());
+       };
+
+OpExpo : opExp Op {
+            std::stringstream ss;
+            ss << $1.lexema << " " << $2.lexema;
             $$.lexema = strdup(ss.str().c_str()); };
-       | F { $$.tipo = $1.tipo; };
+       | opExp { $$.tipo = $1.tipo; };
 
 F   : numentero { $$.tipo = ENTERO; };
     | numreal   { $$.tipo = REAL; };
     | opas F    { $$.lexema = $1.lexema;
                  $$.lexema = strcat($$.lexema, $2.lexema);
                 };
-    | OpBuiltin { $$.lexema = $1.lexema; } 
-    | OpIf      { $$.lexema = $1.lexema; } 
-    | id        { $$.lexema = $1.lexema; };
-    | pari Op pard { 
-            $$.lexema = $1.lexema;
-            $$.lexema = strcat($$.lexema, $2.lexema);
-            $$.lexema = strcat($$.lexema, $3.lexema);};
-
+    | OpBuiltin { $$.lexema = $1.lexema; }; 
+    | OpIf      { $$.lexema = $1.lexema; }; 
+    | id      { $$.lexema = $1.lexema; }; 
 %%
 
 void errorSemantico(int nerror,char *lexema,int fila,int columna)
