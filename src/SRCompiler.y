@@ -777,7 +777,7 @@ writeOutputFile(const std::string& fileName) {
 
     writer << ")\n\n";
 
-    writer << "source('" + fileName.substr( fileName.find_last_of("/")+1, fileName.find_last_of("."    ) - fileName.find_last_of("/")-1 ) + "_functions.R" + "')\n";
+    writer << "source('" + fileName.substr(0, fileName.length() - 8).substr(fileName.find_last_of("/")+1) + "_functions.R" + "')\n";
     writer << "DT <- 0.25\n";
     writer << "time <- seq(0.001,100,DT)\n";
     writer << "out <- ode(func=model,y=Y,times=time,parms=parms,method='euler')\n";
