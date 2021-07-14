@@ -1,16 +1,13 @@
 /*
     This file is part of SRCompiler.
-
     SRCompiler is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     SRCompiler is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with SRCompiler.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -86,14 +83,14 @@ LD [0-9a-zA-Z_]
 /* Builtins (AKA functions) */
 %}
 "GRAPH"                 {return ret(tkGraph);}
+"INIT"                  {return ret(tkInit);}
 
 %{
 /* Data Builtins */
 %}
-"INIT"                  {return ret(tkInit);}
-"ENDVAL"                {return ret(tkEndval);}
-"HISTORY"               {return ret(tkHistory);}
-"PREVIOUS"              {return ret(tkPrevious);}
+"ENDVAL"                {return ret(tkBuiltin);}
+"HISTORY"               {return ret(tkBuiltin);}
+"PREVIOUS"              {return ret(tkBuiltin);}
 
 %{
 /* Logical Builtins */
@@ -108,55 +105,55 @@ LD [0-9a-zA-Z_]
 %{
 /* Statistical Builtins */
 %}
-"RANDOM"                {return ret(tkRandom);}
-"NORMAL"                {return ret(tkNormal);}
-"POISSON"               {return ret(tkPoisson);}
-"LOGNORMAL"             {return ret(tkLognormal);}
-"EXPRAND"               {return ret(tkExprand);}
+"RANDOM"                {return ret(tkBuiltin);}
+"NORMAL"                {return ret(tkBuiltin);}
+"POISSON"               {return ret(tkBuiltin);}
+"LOGNORMAL"             {return ret(tkBuiltin);}
+"EXPRAND"               {return ret(tkBuiltin);}
 
 %{
 /* Miscellaneous Builtins */
 %}
-"COUNTER"               {return ret(tkCter);}
-"TREND"                 {return ret(tkTrend);}
+"COUNTER"               {return ret(tkBuiltin);}
+"TREND"                 {return ret(tkBuiltin);}
 
 %{
 /* Simulation Builtins */
 %}
-"TIME"                  {return ret(tkTime);}
-"DT"                    {return ret(tkDiT);}
-"STARTTIME"             {return ret(tkStartTime);}
-"STOPTIME"              {return ret(tkStopTime);}
+"TIME"                  {return ret(tkBuiltin);}
+"DT"                    {return ret(tkBuiltin);}
+"STARTTIME"             {return ret(tkBuiltin);}
+"STOPTIME"              {return ret(tkBuiltin);}
 
 %{
 /* Mathematical Builtins */
 %}
-"MAX"                   {return ret(tkMax);}
-"MIN"                   {return ret(tkMin);}
-"EXP"                   {return ret(tkExp);}
-"ABS"                   {return ret(tkAbs);}
-"LN"                    {return ret(tkLn);}
-"INT"                   {return ret(tkInt);}
-"LOG10"                 {return ret(tkLog);}
-"MOD"                   {return ret(tkMod);}
-"PERCENT"               {return ret(tkPer);}
-"PI"                    {return ret(tkPi);}
-"ROOTN"                 {return ret(tkRtn);}
-"ROUND"                 {return ret(tkRond);}
-"SAFEDIV"               {return ret(tkSfDiv);}
-"SQRT"                  {return ret(tkSqrt);}
+"MAX"                   {return ret(tkBuiltin);}
+"MIN"                   {return ret(tkBuiltin);}
+"EXP"                   {return ret(tkBuiltin);}
+"ABS"                  {return ret(tkBuiltin);}
+"LN"                    {return ret(tkBuiltin);}
+"INT"                   {return ret(tkBuiltin);}
+"LOG10"                 {return ret(tkBuiltin);}
+"MOD"                   {return ret(tkBuiltin);}
+"PERCENT"               {return ret(tkBuiltin);}
+"PI"                    {return ret(tkBuiltin);}
+"ROOTN"                 {return ret(tkBuiltin);}
+"ROUND"                 {return ret(tkBuiltin);}
+"SAFEDIV"               {return ret(tkBuiltin);}
+"SQRT"                  {return ret(tkBuiltin);}
 
 %{
 /* Trigonometric Builtins */
 %}
-"ARCCOS"                {return ret(tkArccos);}
-"ARCSIN"                {return ret(tkArcsin);}
-"ARCTAN"                {return ret(tkArctan);}
-"COS"                   {return ret(tkCos);}
-"COSWAVE"               {return ret(tkCoswave);}
-"SIN"                   {return ret(tkSin);}
-"SINWAVE"               {return ret(tkSinwave);}
-"TAN"                   {return ret(tkTan);}
+"ARCCOS"                {return ret(tkBuiltin);}
+"ARCSIN"                {return ret(tkBuiltin);}
+"ARCTAN"                {return ret(tkBuiltin);}
+"COS"                   {return ret(tkBuiltin);}
+"COSWAVE"               {return ret(tkBuiltin);}
+"SIN"                   {return ret(tkBuiltin);}
+"SINWAVE"               {return ret(tkBuiltin);}
+"TAN"                   {return ret(tkBuiltin);}
 
 {L}({LD})*              {return ret(id);}
 {D}+                    {return ret(numentero);}
